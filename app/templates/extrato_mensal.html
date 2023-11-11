@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Extrato Mensal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Extrato Mensal</h1>
+
+    <form method="POST" action="/extrato_mensal">
+        <label for="mes_inicial">Mês Inicial:</label>
+        <input type="month" id="mes_inicial" name="mes_inicial" required>
+
+        <label for="mes_final">Mês Final:</label>
+        <input type="month" id="mes_final" name="mes_final" required>
+
+        <button type="submit">Visualizar Extrato</button>
+    </form>
+
+    {% if extrato %}
+        <h2>Total Receitas: R$ {{ extrato.total_receitas }}</h2>
+        <h2>Total Despesas: R$ {{ extrato.total_despesas }}</h2>
+        <h2>Diferença: R$ {{ extrato.total_receitas - extrato.total_despesas }}</h2>
+
+        <h3>Gráfico Geral</h3>
+        <canvas id="myChart" width="400" height="200"></canvas>
+
+        {% for mes, dados_mes in extrato.meses.items() %}
+            <div>
+                <h2>{{ mes }}</h2>
+                <p>Total de Receitas: R$ {{ dados_mes.total_receitas }}</p>
+                <p>Total de Despesas: R$ {{ dados_mes.total_despesas }}</p>
+                <p>Diferença: R$ {{ dados_mes.diferenca }}</p>
+
+                <h3>Receitas:</h3>
+                <ul>
+                    {% for receita in dados_mes.receitas %}
+                        <li>{{ receita.descricao }} - R$ {{ receita.valor }} - {{ receita.data }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h3>Despesas:</h3>
+                <ul>
+                    {% for despesa in dados_mes.despesas %}
+                        <li>{{ despesa.descricao }} - R$ {{ despesa.valor }} - {{ despesa.data }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h3>Gráfico de Pizza</h3>
+                <canvas id="myPieChart_{{ mes }}" width="400" height="200"></canvas>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var ctxPie_{{ mes }} = document.getElementById('myPieChart_{{ mes }}').getContext('2d');
+                        var myPieChart_{{ mes }} = new Chart(ctxPie_{{ mes }}, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Receitas', 'Despesas'],
+                                datasets: [{
+                                    data: [{{ dados_mes.total_receitas }}, {{ dados_mes.total_despesas }}],
+                                    backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    });
+                </script>
+            </div>
+        {% endfor %}
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Gráfico Geral
+                var ctxGeral = document.getElementById('myChart').getContext('2d');
+                var myChartGeral = new Chart(ctxGeral, {
+                    type: 'bar',
+                    data: {
+                        labels: [{% for mes, dados_mes in extrato.meses.items() %}"{{ mes }}",{% endfor %}],
+                        datasets: [{
+                            label: 'Diferença',
+                            data: [{% for mes, dados_mes in extrato.meses.items() %}{{ dados_mes.diferenca }},{% endfor %}],
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+    {% endif %}
+</body>
+</html>

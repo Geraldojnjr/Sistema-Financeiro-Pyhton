@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Financeiro</title>
+</head>
+<body>
+    <h1>Sistema Financeiro</h1>
+
+    <!-- Formulários de Cadastro -->
+    <h2>Cadastrar Despesa</h2>
+    <form method="post" action="/adicionar_despesa">
+        <label for="descricao_despesa">Descrição:</label>
+        <input type="text" id="descricao_despesa" name="descricao_despesa" required>
+        
+        <label for="valor_despesa">Valor:</label>
+        <input type="number" step="0.01" id="valor_despesa" name="valor_despesa" required>
+        
+        <label for="data_despesa">Data:</label>
+        <input type="date" id="data_despesa" name="data_despesa" required>
+        
+        <label for="categoria_despesa">Categoria:</label>
+        <select id="categoria_despesa" name="categoria_despesa" required>
+            {% for categoria in sistema.categorias_despesa %}
+                <option value="{{ categoria }}">{{ categoria }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit">Cadastrar Despesa</button>
+    </form>
+
+    <h2>Cadastrar Receita</h2>
+    <form method="post" action="/adicionar_receita">
+        <label for="descricao_receita">Descrição:</label>
+        <input type="text" id="descricao_receita" name="descricao_receita" required>
+        
+        <label for="valor_receita">Valor:</label>
+        <input type="number" step="0.01" id="valor_receita" name="valor_receita" required>
+        
+        <label for="data_receita">Data:</label>
+        <input type="date" id="data_receita" name="data_receita" required>
+        
+        <label for="categoria_receita">Categoria:</label>
+        <select id="categoria_receita" name="categoria_receita" required>
+            {% for categoria in sistema.categorias_receita %}
+                <option value="{{ categoria }}">{{ categoria }}</option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit">Cadastrar Receita</button>
+    </form>
+
+    <!-- Formulários de Cadastrar Nova Categoria -->
+    <h2>Cadastrar Nova Categoria para Despesa</h2>
+    <form method="post" action="/cadastrar_categoria_despesa">
+        <label for="nova_categoria_despesa">Nova Categoria para Despesa:</label>
+        <input type="text" id="nova_categoria_despesa" name="nova_categoria" required>
+        <button type="submit">Cadastrar Nova Categoria para Despesa</button>
+    </form>
+
+    <h2>Cadastrar Nova Categoria para Receita</h2>
+    <form method="post" action="/cadastrar_categoria_receita">
+        <label for="nova_categoria_receita">Nova Categoria para Receita:</label>
+        <input type="text" id="nova_categoria_receita" name="nova_categoria" required>
+        <button type="submit">Cadastrar Nova Categoria para Receita</button>
+    </form>
+
+    <h2>Extrato Mensal</h2>
+    <form method="post" action="/extrato_mensal">
+        <label for="mes_inicial">Mês Inicial:</label>
+        <input type="month" id="mes_inicial" name="mes_inicial" required>
+        
+        <label for="mes_final">Mês Final:</label>
+        <input type="month" id="mes_final" name="mes_final" required>
+        
+        <button type="submit">Visualizar Extrato Mensal</button>
+    </form>
+
+<!-- Lista de Dados -->
+<h2>Dados</h2>
+<ul>
+    {% for dado in sistema %}
+        <li>
+            {{ dado.descricao }} - R$ {{ dado.valor }} - {{ dado.data }} - {{ dado.categoria }}
+        </li>
+    {% endfor %}
+</ul>
+</body>
+</html>
