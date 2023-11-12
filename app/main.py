@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from datetime import datetime, date
 from calendar import monthrange
 import json
+import jsonpickle
 import os
 
 app = Flask(__name__)
@@ -18,7 +19,7 @@ class Receita:
         return {
             'descricao': self.descricao,
             'valor': self.valor,
-            'data': self.data.strftime('%Y-%m-%d') if self.data else None,
+            'data': str(self.data),
             'categoria': self.categoria
         }
 
@@ -34,7 +35,7 @@ class Despesa:
         return {
             'descricao': self.descricao,
             'valor': self.valor,
-            'data': self.data.strftime('%Y-%m-%d') if self.data else None,
+            'data': str(self.data),
             'categoria': self.categoria
         }
 
@@ -54,28 +55,39 @@ class SistemaFinanceiro:
         self.despesas.append(despesa)
         self.categorias_despesa.add(despesa.categoria)
 
+    # Método carregar_dados na classe SistemaFinanceiro
     def carregar_dados(self):
         if os.path.exists('dados.json'):
             with open('dados.json', 'r') as arquivo_json:
-                dados = json.load(arquivo_json)
-                self.receitas = [
-                    Receita(**receita) for receita in dados.get('receitas', [])
-                ]
-                self.despesas = [
-                    Despesa(**despesa) for despesa in dados.get('despesas', [])
-                ]
+                dados = jsonpickle.decode(arquivo_json.read())
+                
+                receitas_dicts = dados.get('receitas', [])
+                despesas_dicts = dados.get('despesas', [])
+
+                # Convertendo os dicionários de receitas para instâncias de Receita
+                self.receitas = [Receita(**receita_dict) for receita_dict in receitas_dicts]
+                
+                # Convertendo os dicionários de despesas para instâncias de Despesa
+                self.despesas = [Despesa(**despesa_dict) for despesa_dict in despesas_dicts]
+
+                # Limpar os conjuntos
+                self.categorias_receita.clear()
+                self.categorias_despesa.clear()
+
+                # Adicionar as categorias ao conjunto
                 for receita in self.receitas:
                     self.categorias_receita.add(receita.categoria)
+
                 for despesa in self.despesas:
                     self.categorias_despesa.add(despesa.categoria)
 
     def salvar_dados(self):
         dados = {
-            'receitas': [receita.__dict__ for receita in self.receitas],
-            'despesas': [despesa.to_dict() for despesa in self.despesas]
+            'receitas': self.receitas,
+            'despesas': self.despesas
         }
         with open('dados.json', 'w') as arquivo_json:
-            json.dump(dados, arquivo_json)
+            arquivo_json.write(jsonpickle.encode(dados))
 
     def __iter__(self):
         return iter(self.receitas + self.despesas)
@@ -102,7 +114,7 @@ def adicionar_receita():
 
     nova_receita = Receita(descricao=descricao, valor=valor, data=data, categoria=categoria)
     sistema_financeiro.adicionar_receita(nova_receita)
-    sistema_financeiro.salvar_dados()
+    salvar_dados()
     print(f"Receita adicionada: {descricao} - {valor} - {data} - {categoria}")
     return redirect(url_for('index'))
 
@@ -130,34 +142,25 @@ def adicionar_despesa():
 
 # Função para salvar dados em um arquivo JSON
 def salvar_dados():
-    dados_existentes = carregar_dados()
-
-    dados_novos = {
-        'receitas': [receita.to_dict() for receita in sistema_financeiro.receitas],
-        'despesas': [despesa.to_dict() for despesa in sistema_financeiro.despesas]
-    }
-
-    # Atualizar dados existentes com novos dados
-    dados_existentes['receitas'] = dados_novos['receitas']
-    dados_existentes['despesas'] = dados_novos['despesas']
-
-    with open('dados.json', 'w') as arquivo_json:
-        json.dump(dados_existentes, arquivo_json)
+    sistema_financeiro.salvar_dados()
 
 # Função para carregar dados do arquivo JSON
 def carregar_dados():
     if os.path.exists('dados.json'):
         with open('dados.json', 'r') as arquivo_json:
-            dados = json.load(arquivo_json)
-            receitas = [Receita(**receita) for receita in dados.get('receitas', [])]
-            despesas = [Despesa(**despesa) for despesa in dados.get('despesas', [])]
-            for despesa in despesas:
-                if isinstance(despesa.data, str):
-                    # Se a data for uma string, converta para datetime.date
-                    despesa.data = datetime.strptime(despesa.data, '%Y-%m-%d').date()
-            return {'receitas': receitas, 'despesas': despesas}
-    else:
-        return {'receitas': [], 'despesas': []}
+            dados = jsonpickle.decode(arquivo_json.read())
+
+            sistema_financeiro.receitas = [Receita(**receita) for receita in dados.get('receitas', [])]
+            sistema_financeiro.despesas = [Despesa(**despesa) for despesa in dados.get('despesas', [])]
+
+            sistema_financeiro.categorias_receita = set()
+            sistema_financeiro.categorias_despesa = set()
+
+            for receita_dict in dados.get('receitas', []):
+                sistema_financeiro.categorias_receita.add(receita_dict['categoria'])
+
+            for despesa_dict in dados.get('despesas', []):
+                sistema_financeiro.categorias_despesa.add(despesa_dict['categoria'])
 
 # Rota para cadastrar nova categoria para despesa
 @app.route('/cadastrar_categoria_despesa', methods=['POST'])
@@ -294,12 +297,15 @@ def filtrar_dados_por_categoria_data_descricao(dados, categoria, data, descricao
     dados_filtrados = []
 
     for dado in dados:
+        # Use jsonpickle para desserializar o objeto
+        dado_obj = jsonpickle.decode(dado)
+
         if (
-            (categoria is None or dado.categoria == categoria) and
-            (data is None or dado.data == data) and
-            (descricao is None or descricao.lower() in dado.descricao.lower())
+            (categoria is None or dado_obj.categoria == categoria) and
+            (data is None or dado_obj.data == data) and
+            (descricao is None or descricao.lower() in dado_obj.descricao.lower())
         ):
-            dados_filtrados.append(dado)
+            dados_filtrados.append(dado_obj)
 
     return dados_filtrados
 
