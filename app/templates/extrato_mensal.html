@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Extrato Mensal</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 400px; /* Ajuste a largura conforme necessário */
+            height: 200px; /* Ajuste a altura conforme necessário */
+        }
+    </style>
 </head>
+
 <body>
     <h1>Extrato Mensal</h1>
 
@@ -26,7 +34,38 @@
         <h2>Diferença: R$ {{ extrato.total_receitas - extrato.total_despesas }}</h2>
 
         <h3>Gráfico Geral</h3>
-        <canvas id="myChart" width="400" height="200"></canvas>
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+
+        <!-- Script para o Gráfico Geral -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var ctxGeral = document.getElementById('myChart').getContext('2d');
+                var myChartGeral = new Chart(ctxGeral, {
+                    type: 'bar',
+                    data: {
+                        labels: [{% for mes, dados_mes in extrato.meses.items() %}"{{ mes }}",{% endfor %}],
+                        datasets: [{
+                            label: 'Diferença',
+                            data: [{% for mes, dados_mes in extrato.meses.items() %}{{ dados_mes.diferenca }},{% endfor %}],
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            });
+        </script>
 
         {% for mes, dados_mes in extrato.meses.items() %}
             <div>
@@ -50,8 +89,10 @@
                 </ul>
 
                 <h3>Gráfico de Pizza</h3>
-                <canvas id="myPieChart_{{ mes }}" width="400" height="200"></canvas>
-
+                <div class="chart-container">
+                    <canvas id="myPieChart_{{ mes }}" width="400" height="200"></canvas>
+                </div>
+                <!-- Script para o Gráfico de Pizza -->
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
                         var ctxPie_{{ mes }} = document.getElementById('myPieChart_{{ mes }}').getContext('2d');
@@ -75,33 +116,7 @@
                 </script>
             </div>
         {% endfor %}
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Gráfico Geral
-                var ctxGeral = document.getElementById('myChart').getContext('2d');
-                var myChartGeral = new Chart(ctxGeral, {
-                    type: 'bar',
-                    data: {
-                        labels: [{% for mes, dados_mes in extrato.meses.items() %}"{{ mes }}",{% endfor %}],
-                        datasets: [{
-                            label: 'Diferença',
-                            data: [{% for mes, dados_mes in extrato.meses.items() %}{{ dados_mes.diferenca }},{% endfor %}],
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            });
-        </script>
     {% endif %}
 </body>
+
 </html>

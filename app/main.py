@@ -65,10 +65,10 @@ class SistemaFinanceiro:
                 despesas_dicts = dados.get('despesas', [])
 
                 # Convertendo os dicionários de receitas para instâncias de Receita
-                self.receitas = [Receita(**receita_dict) for receita_dict in receitas_dicts]
+                self.receitas = [Receita(**receita.__dict__) for receita in dados.get('receitas', [])]
                 
                 # Convertendo os dicionários de despesas para instâncias de Despesa
-                self.despesas = [Despesa(**despesa_dict) for despesa_dict in despesas_dicts]
+                self.despesas = [Despesa(**despesa.__dict__) for despesa in dados.get('despesas', [])]
 
                 # Limpar os conjuntos
                 self.categorias_receita.clear()
