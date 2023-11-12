@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../static/style.css"/>
+
     <title>Sistema Financeiro</title>
 </head>
 <body>
@@ -79,12 +81,46 @@
 
 <!-- Lista de Dados -->
 <h2>Dados</h2>
-<ul>
-    {% for dado in sistema %}
-        <li>
-            {{ dado.descricao }} - R$ {{ dado.valor }} - {{ dado.data }} - {{ dado.categoria }}
-        </li>
-    {% endfor %}
-</ul>
+
+{% if sistema %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Categoria</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dado in sistema %}
+                    {% if dado.receitas %}
+                        {% for receita in dado.receitas %}
+                            <tr>
+                                <td>{{ receita.categoria }}</td>
+                                <td>R$ {{ receita.valor }}</td>
+                                <td>{{ receita.data }}</td>
+                                <td>{{ receita.descricao }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    {% if dado.despesas %}
+                        {% for despesa in dado.despesas %}
+                            <tr>
+                                <td>{{ despesa.categoria }}</td>
+                                <td>R$ {{ despesa.valor }}</td>
+                                <td>{{ despesa.data }}</td>
+                                <td>{{ despesa.descricao }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p>Nenhum dado disponível.</p>
+{% endif %}
 </body>
 </html>
