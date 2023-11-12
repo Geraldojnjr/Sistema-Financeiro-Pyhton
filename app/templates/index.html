@@ -95,26 +95,12 @@
             </thead>
             <tbody>
                 {% for dado in sistema %}
-                    {% if dado.receitas %}
-                        {% for receita in dado.receitas %}
-                            <tr>
-                                <td>{{ receita.categoria }}</td>
-                                <td>R$ {{ receita.valor }}</td>
-                                <td>{{ receita.data }}</td>
-                                <td>{{ receita.descricao }}</td>
-                            </tr>
-                        {% endfor %}
-                    {% endif %}
-                    {% if dado.despesas %}
-                        {% for despesa in dado.despesas %}
-                            <tr>
-                                <td>{{ despesa.categoria }}</td>
-                                <td>R$ {{ despesa.valor }}</td>
-                                <td>{{ despesa.data }}</td>
-                                <td>{{ despesa.descricao }}</td>
-                            </tr>
-                        {% endfor %}
-                    {% endif %}
+                    <tr>
+                        <td>{{ dado.categoria }}</td>
+                        <td>R$ {{ dado.valor }}</td>
+                        <td>{{ dado.data }}</td>
+                        <td>{{ dado.descricao }}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
