@@ -95,7 +95,7 @@
             </thead>
             <tbody>
                 {% for dado in sistema %}
-                    <tr>
+                    <tr class="{% if dado is defined and dado.__class__.__name__ == 'Receita' %}receita{% elif dado is defined and dado.__class__.__name__ == 'Despesa' %}despesa{% endif %}">
                         <td>{{ dado.categoria }}</td>
                         <td>R$ {{ dado.valor }}</td>
                         <td>{{ dado.data }}</td>
