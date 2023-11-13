@@ -264,9 +264,15 @@ def obter_extrato_mensal(data_inicio, data_fim):
 # Rota principal
 @app.route('/')
 def index():
-    print(sistema_financeiro.receitas)  # Verifique as receitas carregadas
-    print(sistema_financeiro.despesas)  # Verifique as despesas carregadas
-    return render_template('index.html', sistema=sistema_financeiro)
+    # Combine as listas de receitas e despesas
+    todas_transacoes = sistema_financeiro.receitas + sistema_financeiro.despesas
+
+    # Ordenar todas as transações com base na data em ordem decrescente
+    todas_transacoes = sorted(todas_transacoes, key=lambda x: str(x.data), reverse=True)
+
+    return render_template('index.html', sistema=todas_transacoes)
+
+
 
 # Rota para exibir dados filtrados
 @app.route('/filtrar_dados', methods=['POST'])
