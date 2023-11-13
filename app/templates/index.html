@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../static/style.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 
     <title>Sistema Financeiro</title>
 </head>
@@ -82,31 +83,31 @@
 <!-- Lista de Dados -->
 <h2>Dados</h2>
 
-{% if sistema %}
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Categoria</th>
-                    <th>Valor</th>
-                    <th>Data</th>
-                    <th>Descrição</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for dado in sistema %}
-                    <tr class="{% if dado is defined and dado.__class__.__name__ == 'Receita' %}receita{% elif dado is defined and dado.__class__.__name__ == 'Despesa' %}despesa{% endif %}">
-                        <td>{{ dado.categoria }}</td>
-                        <td>R$ {{ dado.valor }}</td>
-                        <td>{{ dado.data }}</td>
-                        <td>{{ dado.descricao }}</td>
+    {% if sistema %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Valor</th>
+                        <th>Data</th>
+                        <th>Descrição</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% else %}
-    <p>Nenhum dado disponível.</p>
-{% endif %}
+                </thead>
+                <tbody>
+                    {% for dado in sistema %}
+                        <tr class="{% if dado is defined and dado.__class__.__name__ == 'Receita' %}receita{% elif dado is defined and dado.__class__.__name__ == 'Despesa' %}despesa{% endif %}">
+                            <td>{{ dado.categoria }}</td>
+                            <td>R$ {{ dado.valor }}</td>
+                            <td>{{ dado.data }}</td>
+                            <td>{{ dado.descricao }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Nenhum dado disponível.</p>
+    {% endif %}
 </body>
 </html>
