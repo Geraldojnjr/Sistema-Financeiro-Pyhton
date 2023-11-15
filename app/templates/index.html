@@ -24,8 +24,8 @@
         <input type="date" id="data_despesa" name="data_despesa" required>
         
         <label for="categoria_despesa">Categoria:</label>
-        <select id="categoria_despesa" name="categoria_despesa" required>
-            {% for categoria in sistema.categorias_despesa %}
+        <select name="categoria_despesa" id="categoria_despesa">
+            {% for categoria in categorias_despesa %}
                 <option value="{{ categoria }}">{{ categoria }}</option>
             {% endfor %}
         </select>
@@ -45,8 +45,8 @@
         <input type="date" id="data_receita" name="data_receita" required>
         
         <label for="categoria_receita">Categoria:</label>
-        <select id="categoria_receita" name="categoria_receita" required>
-            {% for categoria in sistema.categorias_receita %}
+        <select name="categoria_receita" id="categoria_receita">
+            {% for categoria in categorias_receita %}
                 <option value="{{ categoria }}">{{ categoria }}</option>
             {% endfor %}
         </select>
@@ -56,16 +56,16 @@
 
     <!-- Formulários de Cadastrar Nova Categoria -->
     <h2>Cadastrar Nova Categoria para Despesa</h2>
-    <form method="post" action="/cadastrar_categoria_despesa">
+    <form method="POST" action="{{ url_for('cadastrar_categoria_despesa') }}">
         <label for="nova_categoria_despesa">Nova Categoria para Despesa:</label>
-        <input type="text" id="nova_categoria_despesa" name="nova_categoria" required>
+        <input type="text" id="nova_categoria_despesa" name="nova_categoria_despesa" required>
         <button type="submit">Cadastrar Nova Categoria para Despesa</button>
     </form>
 
     <h2>Cadastrar Nova Categoria para Receita</h2>
     <form method="post" action="/cadastrar_categoria_receita">
         <label for="nova_categoria_receita">Nova Categoria para Receita:</label>
-        <input type="text" id="nova_categoria_receita" name="nova_categoria" required>
+        <input type="text" id="nova_categoria_receita" name="nova_categoria_receita" required>
         <button type="submit">Cadastrar Nova Categoria para Receita</button>
     </form>
 
