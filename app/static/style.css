@@ -81,6 +81,7 @@ th {
 .recent-transactions,
 .categorias,
 .quick-access {
+    height: 50%;
     width: 30%;
     padding: 15px;
     border: 1px solid #ddd;

@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
     setupModalButton('btnModalDespesa', 'modalDespesa', 'closeModalDespesa', 'formDespesa', '/adicionar_despesa');
     setupModalButton('btnModalReceita', 'modalReceita', 'closeModalReceita', 'formReceita', '/adicionar_receita');
     setupModalButton('btnModalExtrato', 'modalExtrato', 'closeModalExtrato', 'formExtrato', '/extrato_mensal');
+    setupModalButton('btnModalAddCatReceita', 'modalCatReceita', 'closeModalCatReceita', 'formCatReceita', '/cadastrar_categoria_receita');
+    setupModalButton('btnModalAddCatDespesa', 'modalCatDespesa', 'closeModalCatDespesa', 'formCatDespesa', '/cadastrar_categoria_despesa');
 });
 
 function setupModalButton(btnId, modalId, closeModalId, formId, action) {

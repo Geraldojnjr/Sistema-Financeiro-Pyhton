@@ -12,21 +12,6 @@
 <body>
     <h1>Sistema Financeiro</h1>
 
-    <!-- Formulários de Cadastrar Nova Categoria -->
-    <h2>Cadastrar Nova Categoria para Despesa</h2>
-    <form method="POST" action="{{ url_for('cadastrar_categoria_despesa') }}">
-        <label for="nova_categoria_despesa">Nova Categoria para Despesa:</label>
-        <input type="text" id="nova_categoria_despesa" name="nova_categoria_despesa" required>
-        <button type="submit">Cadastrar Nova Categoria para Despesa</button>
-    </form>
-
-    <h2>Cadastrar Nova Categoria para Receita</h2>
-    <form method="post" action="/cadastrar_categoria_receita">
-        <label for="nova_categoria_receita">Nova Categoria para Receita:</label>
-        <input type="text" id="nova_categoria_receita" name="nova_categoria_receita" required>
-        <button type="submit">Cadastrar Nova Categoria para Receita</button>
-    </form>
-
     <div class="dashboard">
         <div class="recent-transactions">
             <h2>Últimas 20 Transações</h2>
@@ -64,9 +49,9 @@
             <div class="button-group-cat">
                 <button id="btnModalAddCatReceita">Cadastrar Categoria de Receita</button>
                 <button id="btnModalAddCatDespesa">Cadastrar Categoria de Despesa</button>
+                <button id="btnModalAddCatTipo">Cadastrar Tipo do Gasto</button>
             </div>
         </div>
-
 
         <div class="quick-access">
             <h2>Acesso Rápido</h2>
@@ -147,6 +132,34 @@
                 <input type="month" id="mes_final" name="mes_final" required>
 
                 <button type="submit">Ver</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Cadastro de Categoria para Receita -->
+    <div id="modalCatReceita" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalCatReceita">&times;</span>
+            <h2>Cadastre uma Categoria para Receita</h2>
+            <form method="post" action="/cadastrar_categoria_receita" id="formCatReceita">
+                <label for="nova_categoria_receita">Nova Categoria para Receita:</label>
+                <input type="text" id="nova_categoria_receita" name="nova_categoria_receita" required>
+
+                <button type="submit">Cadastrar Categoria</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Cadastro de Categoria para Despesa -->
+    <div id="modalCatDespesa" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalCatDespesa">&times;</span>
+            <h2>Cadastre uma Categoria para Despesa</h2>
+            <form method="post" action="/cadastrar_categoria_despesa" id="formCatDespesa">
+                <label for="nova_categoria_despesa">Nova Categoria para Despesa:</label>
+                <input type="text" id="nova_categoria_despesa" name="nova_categoria_despesa" required>
+
+                <button type="submit">Cadastrar Categoria</button>
             </form>
         </div>
     </div>
