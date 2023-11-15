@@ -185,6 +185,11 @@ def index():
     todas_transacoes = sistema_financeiro.receitas + sistema_financeiro.despesas
 
     # Ordenar todas as transações com base na data em ordem decrescente
+    todas_transacoes = [
+        transacao
+        for transacao in todas_transacoes
+        if transacao and transacao.data is not None
+    ]
     todas_transacoes = sorted(todas_transacoes, key=lambda x: str(x.data), reverse=True)
 
     # Passe as categorias para a página
