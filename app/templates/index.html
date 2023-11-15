@@ -1,58 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
-    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
 
     <title>Sistema Financeiro</title>
 </head>
+
 <body>
     <h1>Sistema Financeiro</h1>
-
-    <!-- Formulários de Cadastro -->
-    <h2>Cadastrar Despesa</h2>
-    <form method="post" action="/adicionar_despesa">
-        <label for="descricao_despesa">Descrição:</label>
-        <input type="text" id="descricao_despesa" name="descricao_despesa" required>
-        
-        <label for="valor_despesa">Valor:</label>
-        <input type="number" step="0.01" id="valor_despesa" name="valor_despesa" required>
-        
-        <label for="data_despesa">Data:</label>
-        <input type="date" id="data_despesa" name="data_despesa" required>
-        
-        <label for="categoria_despesa">Categoria:</label>
-        <select name="categoria_despesa" id="categoria_despesa">
-            {% for categoria in categorias_despesa %}
-                <option value="{{ categoria }}">{{ categoria }}</option>
-            {% endfor %}
-        </select>
-        
-        <button type="submit">Cadastrar Despesa</button>
-    </form>
-
-    <h2>Cadastrar Receita</h2>
-    <form method="post" action="/adicionar_receita">
-        <label for="descricao_receita">Descrição:</label>
-        <input type="text" id="descricao_receita" name="descricao_receita" required>
-        
-        <label for="valor_receita">Valor:</label>
-        <input type="number" step="0.01" id="valor_receita" name="valor_receita" required>
-        
-        <label for="data_receita">Data:</label>
-        <input type="date" id="data_receita" name="data_receita" required>
-        
-        <label for="categoria_receita">Categoria:</label>
-        <select name="categoria_receita" id="categoria_receita">
-            {% for categoria in categorias_receita %}
-                <option value="{{ categoria }}">{{ categoria }}</option>
-            {% endfor %}
-        </select>
-        
-        <button type="submit">Cadastrar Receita</button>
-    </form>
 
     <!-- Formulários de Cadastrar Nova Categoria -->
     <h2>Cadastrar Nova Categoria para Despesa</h2>
@@ -69,46 +27,132 @@
         <button type="submit">Cadastrar Nova Categoria para Receita</button>
     </form>
 
-    <h2>Extrato Mensal</h2>
-    <form method="post" action="/extrato_mensal">
-        <label for="mes_inicial">Mês Inicial:</label>
-        <input type="month" id="mes_inicial" name="mes_inicial" required>
-        
-        <label for="mes_final">Mês Final:</label>
-        <input type="month" id="mes_final" name="mes_final" required>
-        
-        <button type="submit">Visualizar Extrato Mensal</button>
-    </form>
+    <div class="dashboard">
+        <div class="recent-transactions">
+            <h2>Últimas 20 Transações</h2>
+            {% if sistema|length > 0 %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Valor</th>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dado in sistema[:20] %}
+                        <tr
+                            class="{% if dado is defined and dado.__class__.__name__ == 'Receita' %}receita{% elif dado is defined and dado.__class__.__name__ == 'Despesa' %}despesa{% endif %}">
+                            <td>{{ dado.categoria }}</td>
+                            <td>R$ {{ dado.valor }}</td>
+                            <td>{{ dado.data }}</td>
+                            <td>{{ dado.descricao }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>Nenhum dado disponível.</p>
+            {% endif %}
+        </div>
 
-    
-<!-- Lista de Dados -->
-<h2>Dados</h2>
+        <div class="categorias">
+            <h2>Adicionar Categorias</h2>
+            <div class="button-group-cat">
+                <button id="btnModalAddCatReceita">Cadastrar Categoria de Receita</button>
+                <button id="btnModalAddCatDespesa">Cadastrar Categoria de Despesa</button>
+            </div>
+        </div>
 
-{% if sistema %}
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Categoria</th>
-                    <th>Valor</th>
-                    <th>Data</th>
-                    <th>Descrição</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for dado in sistema %}
-                    <tr class="{% if dado is defined and dado.__class__.__name__ == 'Receita' %}receita{% elif dado is defined and dado.__class__.__name__ == 'Despesa' %}despesa{% endif %}">
-                        <td>{{ dado.categoria }}</td>
-                        <td>R$ {{ dado.valor }}</td>
-                        <td>{{ dado.data }}</td>
-                        <td>{{ dado.descricao }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+        <div class="quick-access">
+            <h2>Acesso Rápido</h2>
+            <div class="button-group-rapido">
+                <button id="btnModalReceita">Cadastrar Receita</button>
+                <button id="btnModalDespesa">Cadastrar Despesa</button>
+                <button id="btnModalExtrato">Ver Extrato</button>
+            </div>
+        </div>
     </div>
-{% else %}
-    <p>Nenhum dado disponível.</p>
-{% endif %}
+
+    <!-- Modal para Despesa -->
+    <div id="modalDespesa" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalDespesa">&times;</span>
+            <h2>Cadastrar Despesa</h2>
+            <form method="post" action="/adicionar_despesa" id="formDespesa">
+                <!-- Seus campos de formulário aqui -->
+                <label for="descricao_despesa">Descrição:</label>
+                <input type="text" id="descricao_despesa" name="descricao_despesa" required>
+
+                <label for="valor_despesa">Valor:</label>
+                <input type="number" step="0.01" id="valor_despesa" name="valor_despesa" required>
+
+                <label for="data_despesa">Data:</label>
+                <input type="date" id="data_despesa" name="data_despesa" required>
+
+                <label for="categoria_despesa">Categoria:</label>
+                <select name="categoria_despesa" id="categoria_despesa">
+                    {% for categoria in categorias_despesa %}
+                    <option value="{{ categoria }}">{{ categoria }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Cadastrar Despesa</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Receita -->
+    <div id="modalReceita" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalReceita">&times;</span>
+            <h2>Cadastrar Receita</h2>
+            <form method="post" action="/adicionar_receita" id="formReceita">
+                <!-- Seus campos de formulário aqui -->
+                <label for="descricao_receita">Descrição:</label>
+                <input type="text" id="descricao_receita" name="descricao_receita" required>
+
+                <label for="valor_receita">Valor:</label>
+                <input type="number" step="0.01" id="valor_receita" name="valor_receita" required>
+
+                <label for="data_receita">Data:</label>
+                <input type="date" id="data_receita" name="data_receita" required>
+
+                <label for="categoria_receita">Categoria:</label>
+                <select name="categoria_receita" id="categoria_receita">
+                    {% for categoria in categorias_receita %}
+                    <option value="{{ categoria }}">{{ categoria }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit">Cadastrar Receita</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Extrato -->
+    <div id="modalExtrato" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalExtrato">&times;</span>
+            <h2>Ver Extrato</h2>
+            <form method="post" action="/extrato_mensal" id="formExtrato">
+                <label for="mes_inicial">Mês Inicial:</label>
+                <input type="month" id="mes_inicial" name="mes_inicial" required>
+
+                <label for="mes_final">Mês Final:</label>
+                <input type="month" id="mes_final" name="mes_final" required>
+
+                <button type="submit">Ver</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
+
 </html>

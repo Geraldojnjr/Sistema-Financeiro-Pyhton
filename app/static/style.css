@@ -6,7 +6,8 @@ body {
     color: #333;
 }
 
-h1, h2 {
+h1,
+h2 {
     color: #0066cc;
 }
 
@@ -24,7 +25,8 @@ label {
     color: #555;
 }
 
-input, select {
+input,
+select {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -40,6 +42,8 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-right: 10px;
+    top: 10px;
 }
 
 button:hover {
@@ -56,7 +60,8 @@ table {
     margin-top: 20px;
 }
 
-th, td {
+th,
+td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
@@ -65,4 +70,78 @@ th, td {
 th {
     background-color: #0066cc;
     color: #fff;
+}
+
+.dashboard {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.recent-transactions,
+.categorias,
+.quick-access {
+    width: 30%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.charts canvas {
+    width: 100% !important;
+}
+
+.button-group-rapido {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.button-group-cat {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.button-group a {
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.modal-content button {
+    margin-right: 10px;
+    /* Ajuste a margem conforme necessário */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }

@@ -81,5 +81,39 @@ class SistemaFinanceiro:
         # Se houver ids não nulos, retorne o próximo id disponível
         return max(ids_nao_nulos) + 1
 
+    def obter_ultimas_transacoes(self, quantidade=20):
+        todas_transacoes = sorted(
+            self.receitas + self.despesas, key=lambda x: x.data, reverse=True
+        )
+        return todas_transacoes[:quantidade]
+
+    def obter_distribuicao_categorias(self):
+        categorias = list(self.categorias_receita.union(self.categorias_despesa))
+        dados = {
+            "labels": categorias,  # Use diretamente as strings das categorias
+            "datasets": [
+                {
+                    "data": [
+                        sum(
+                            1
+                            for transacao in self.receitas
+                            if transacao.categoria == transacao_categoria
+                        ),
+                        sum(
+                            1
+                            for transacao in self.despesas
+                            if transacao.categoria == transacao_categoria
+                        ),
+                    ],
+                    "backgroundColor": [
+                        "#36A2EB",
+                        "#FF6384",
+                    ],  # Cores para receitas e despesas, respectivamente
+                }
+                for transacao_categoria in categorias
+            ],
+        }
+        return dados
+
     def __iter__(self):
         return iter(self.receitas + self.despesas)

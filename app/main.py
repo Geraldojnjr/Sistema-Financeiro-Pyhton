@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
+import jsonpickle
 from datetime import datetime
 from sistema_financeiro import SistemaFinanceiro
 from models import Receita, Despesa
+from calendar import monthrange
 
 last_transaction_id = 0
 app = Flask(__name__)
@@ -32,7 +34,6 @@ def adicionar_receita():
     )
     sistema_financeiro.adicionar_receita(nova_receita)
     sistema_financeiro.salvar_dados()
-    print(f"Receita adicionada: {descricao} - {valor} - {data} - {categoria}")
     return redirect(url_for("index"))
 
 
@@ -84,7 +85,6 @@ def cadastrar_categoria_receita():
 
 # Função para cadastrar nova categoria
 def cadastrar_nova_categoria(nova_categoria, tipo):
-    print(f"Cadastrando nova categoria ({tipo}): {nova_categoria}")
     if tipo == "despesa":
         sistema_financeiro.categorias_despesa.add(nova_categoria)
     elif tipo == "receita":
@@ -113,7 +113,6 @@ def obter_periodo_mes(mes_extrato):
     data_inicio = datetime.strptime(mes_extrato, "%Y-%m").date().replace(day=1)
 
     if not isinstance(data_inicio, date):
-        print(f"Data de início inválida: {data_inicio}")
         return None, None
 
     ultimo_dia_mes = monthrange(data_inicio.year, data_inicio.month)[1]
@@ -179,28 +178,19 @@ def obter_extrato_mensal(data_inicio, data_fim):
 
 
 # Rota principal
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
-    # Combine as listas de receitas e despesas
-    todas_transacoes = sistema_financeiro.receitas + sistema_financeiro.despesas
+    sistema_financeiro.carregar_dados()
 
-    # Ordenar todas as transações com base na data em ordem decrescente
-    todas_transacoes = [
-        transacao
-        for transacao in todas_transacoes
-        if transacao and transacao.data is not None
-    ]
-    todas_transacoes = sorted(todas_transacoes, key=lambda x: str(x.data), reverse=True)
-
-    # Passe as categorias para a página
-    categorias_receita = list(sistema_financeiro.categorias_receita)
-    categorias_despesa = list(sistema_financeiro.categorias_despesa)
+    ultimas_transacoes = sistema_financeiro.obter_ultimas_transacoes()
+    distribuicao_categorias = sistema_financeiro.obter_distribuicao_categorias()
 
     return render_template(
         "index.html",
-        sistema=todas_transacoes,
-        categorias_receita=categorias_receita,
-        categorias_despesa=categorias_despesa,
+        sistema=ultimas_transacoes,
+        categorias_despesa=sistema_financeiro.categorias_despesa,
+        categorias_receita=sistema_financeiro.categorias_receita,
+        distribuicao_categorias=distribuicao_categorias,
     )
 
 
