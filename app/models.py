@@ -25,12 +25,15 @@ class Receita:
             return cls()
 
         # Use get para acessar as chaves do dicionário com segurança
-        return cls(
+        receita = cls(
             descricao=receita_dict.get("descricao", ""),
             valor=receita_dict.get("valor", 0.0),
             data=receita_dict.get("data", ""),
             categoria=receita_dict.get("categoria", ""),
         )
+        receita.id = receita_dict.get("id", None)
+
+        return receita
 
 
 class Despesa:
@@ -57,9 +60,13 @@ class Despesa:
             return cls()
 
         # Use get para acessar as chaves do dicionário com segurança
-        return cls(
+        despesa = cls(
             descricao=despesa_dict.get("descricao", ""),
             valor=despesa_dict.get("valor", 0.0),
             data=despesa_dict.get("data", ""),
             categoria=despesa_dict.get("categoria", ""),
         )
+
+        despesa.id = despesa_dict.get("id", None)
+
+        return despesa

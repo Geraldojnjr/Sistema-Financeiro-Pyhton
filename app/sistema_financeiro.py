@@ -11,10 +11,12 @@ class SistemaFinanceiro:
         self.categorias_despesa = set()
 
     def adicionar_receita(self, receita):
+        receita.id = self.gerar_novo_id(self.receitas)
         self.receitas.append(receita)
         self.categorias_receita.add(receita.categoria)
 
     def adicionar_despesa(self, despesa):
+        despesa.id = self.gerar_novo_id(self.despesas)
         self.despesas.append(despesa)
         self.categorias_despesa.add(despesa.categoria)
 
@@ -62,6 +64,22 @@ class SistemaFinanceiro:
         }
         with open("dados.json", "w") as arquivo_json:
             arquivo_json.write(jsonpickle.encode(dados))
+
+    # Método para gerar um novo ID
+    def gerar_novo_id(self, lista):
+        # Verifique se a lista está vazia
+        if not lista:
+            return 1  # Se vazia, retorne 1 como o primeiro ID
+
+        # Use uma lista de ids não nulos
+        ids_nao_nulos = [item.id for item in lista if item.id is not None]
+
+        # Verifique se todos os ids são nulos
+        if not ids_nao_nulos:
+            return 1  # Se todos os ids são nulos, retorne 1 como o primeiro ID
+
+        # Se houver ids não nulos, retorne o próximo id disponível
+        return max(ids_nao_nulos) + 1
 
     def __iter__(self):
         return iter(self.receitas + self.despesas)
