@@ -23,6 +23,9 @@ function setupModalButton(btnId, modalId, closeModalId, formId, action) {
     var modal = document.getElementById(modalId);
     var closeModal = document.getElementById(closeModalId);
     var form = document.getElementById(formId);
+    var container = document.getElementById('extrato-container'); // Adicionado para verificar o contêiner
+
+    console.log('Contêiner:', container); // Adicionado para verificar o contêiner
 
     btn.addEventListener('click', function () {
         modal.style.display = 'block';
@@ -30,6 +33,7 @@ function setupModalButton(btnId, modalId, closeModalId, formId, action) {
 
     closeModal.addEventListener('click', function () {
         modal.style.display = 'none';
+        location.reload(); // Recarregar a página ao fechar o modal
     });
 
     window.addEventListener('click', function (event) {
@@ -41,8 +45,6 @@ function setupModalButton(btnId, modalId, closeModalId, formId, action) {
     // Adicione um event listener para o envio do formulário via AJAX
     form.addEventListener('submit', function (event) {
         event.preventDefault();
-
-        console.log('Formulário enviado:', formId);
 
         // Obtenha os dados do formulário
         const formData = new FormData(this);
@@ -59,20 +61,23 @@ function setupModalButton(btnId, modalId, closeModalId, formId, action) {
                 return response.text();
             })
             .then(data => {
+                console.log('Resposta do servidor:', data);
+            
                 if (formId === 'formExtrato') {
-                    console.log('Resposta do servidor:', data);
-                    document.body.innerHTML = data;
-                    modal.style.display = 'none';
+                    var container = document.getElementById('extrato-container');
+            
+                    if (container) {
+                        container.innerHTML = data;
+                    } else {
+                        console.error('Contêiner não encontrado');
+                    }
+            
+                    modal.style.display = 'none'; // Fechar o modal após o envio bem-sucedido
                 } else {
-                    console.log('Resposta do servidor:', data);
                     modal.style.display = 'none';
                 }
             })
+            
             .catch(error => console.error('Erro:', error));
-
-        if (formId === 'formExtrato') {
-            console.log('Evitando recarregamento da página.');
-            return false;
-        }
     });
 }

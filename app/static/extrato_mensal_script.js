@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
             maintainAspectRatio: false
         }
     });
-    
+
     // Gráfico de Pizza
     Object.entries(extratoData.meses).forEach(([mes, dados_mes]) => {
         generatePieChart(

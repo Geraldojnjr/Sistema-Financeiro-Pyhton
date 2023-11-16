@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
-    <script type="text/javascript" src="{{ url_for('static', filename='extrato_mensal_script.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='chart.js') }}"></script>
     <title>Extrato Mensal</title>
 
     <script>
@@ -16,56 +15,61 @@
 </head>
 
 <body>
-    <h1>Extrato Mensal</h1>
+    <div id="extrato-container">
+        <h1>Extrato Mensal</h1>
 
-    <form method="POST" action="/extrato_mensal">
-        <label for="mes_inicial">Mês Inicial:</label>
-        <input type="month" id="mes_inicial" name="mes_inicial" required>
+        <form method="POST" action="/extrato_mensal">
+            <label for="mes_inicial">Mês Inicial:</label>
+            <input type="month" id="mes_inicial" name="mes_inicial" required>
 
-        <label for="mes_final">Mês Final:</label>
-        <input type="month" id="mes_final" name="mes_final" required>
+            <label for="mes_final">Mês Final:</label>
+            <input type="month" id="mes_final" name="mes_final" required>
 
-        <button type="submit">Visualizar Extrato</button>
-    </form>
+            <button type="submit">Visualizar Extrato</button>
+        </form>
 
-    {% if extrato %}
-    <h2>Total Receitas: R$ {{ extrato.total_receitas }}</h2>
-    <h2>Total Despesas: R$ {{ extrato.total_despesas }}</h2>
-    <h2>Diferença: R$ {{ extrato.total_receitas - extrato.total_despesas }}</h2>
+        {% if extrato %}
+        <h2>Total Receitas: R$ {{ extrato.total_receitas }}</h2>
+        <h2>Total Despesas: R$ {{ extrato.total_despesas }}</h2>
+        <h2>Diferença: R$ {{ extrato.total_receitas - extrato.total_despesas }}</h2>
 
-    <h3>Gráfico Geral</h3>
-    <div class="chart-container">
-        <canvas id="myChart"></canvas>
-    </div>
-
-    {% for mes, dados_mes in extrato.meses.items() %}
-    <div>
-        <h2>{{ mes }}</h2>
-        <p>Total de Receitas: R$ {{ dados_mes.total_receitas }}</p>
-        <p>Total de Despesas: R$ {{ dados_mes.total_despesas }}</p>
-        <p>Diferença: R$ {{ dados_mes.diferenca }}</p>
-
-        <h3>Receitas:</h3>
-        <ul>
-            {% for receita in dados_mes.receitas %}
-            <li>{{ receita.descricao }} - R$ {{ receita.valor }} - {{ receita.data }}</li>
-            {% endfor %}
-        </ul>
-
-        <h3>Despesas:</h3>
-        <ul>
-            {% for despesa in dados_mes.despesas %}
-            <li>{{ despesa.descricao }} - R$ {{ despesa.valor }} - {{ despesa.data }}</li>
-            {% endfor %}
-        </ul>
-
-        <h3>Gráfico de Pizza</h3>
+        <h3>Gráfico Geral</h3>
         <div class="chart-container">
-            <canvas id="myPieChart_{{ mes }}" width="400" height="200"></canvas>
+            <canvas id="myChart"></canvas>
         </div>
+
+        {% for mes, dados_mes in extrato.meses.items() %}
+        <div>
+            <h2>{{ mes }}</h2>
+            <p>Total de Receitas: R$ {{ dados_mes.total_receitas }}</p>
+            <p>Total de Despesas: R$ {{ dados_mes.total_despesas }}</p>
+            <p>Diferença: R$ {{ dados_mes.diferenca }}</p>
+
+            <h3>Receitas:</h3>
+            <ul>
+                {% for receita in dados_mes.receitas %}
+                <li>{{ receita.descricao }} - R$ {{ receita.valor }} - {{ receita.data }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Despesas:</h3>
+            <ul>
+                {% for despesa in dados_mes.despesas %}
+                <li>{{ despesa.descricao }} - R$ {{ despesa.valor }} - {{ despesa.data }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Gráfico de Pizza</h3>
+            <div class="chart-container">
+                <canvas id="myPieChart_{{ mes }}" width="400" height="200"></canvas>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
     </div>
-    {% endfor %}
-    {% endif %}
+    
+    <script type="text/javascript" src="{{ url_for('static', filename='extrato_mensal_script.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='chart.js') }}"></script>
 </body>
 
 </html>

@@ -20,6 +20,7 @@ def adicionar_receita():
     valor_str = request.form.get("valor_receita")
     data = request.form.get("data_receita")
     categoria = request.form.get("categoria_receita")
+    origem = request.form.get("origem_receita")
 
     # Verifique se o valor foi fornecido antes de tentar convertê-lo
     if valor_str:
@@ -30,7 +31,7 @@ def adicionar_receita():
         valor = 0.0
 
     nova_receita = Receita(
-        descricao=descricao, valor=valor, data=data, categoria=categoria
+        descricao=descricao, valor=valor, data=data, categoria=categoria, origem=origem
     )
     sistema_financeiro.adicionar_receita(nova_receita)
     sistema_financeiro.salvar_dados()
@@ -44,6 +45,7 @@ def adicionar_despesa():
     valor_str = request.form.get("valor_despesa")
     data = request.form.get("data_despesa")
     categoria = request.form.get("categoria_despesa")
+    tipo = request.form.get("tipo_despesa")
 
     # Verifique se o valor foi fornecido antes de tentar convertê-lo
     if valor_str:
@@ -54,7 +56,7 @@ def adicionar_despesa():
         valor = 0.0
 
     nova_despesa = Despesa(
-        descricao=descricao, valor=valor, data=data, categoria=categoria
+        descricao=descricao, valor=valor, data=data, categoria=categoria, tipo=tipo
     )
     sistema_financeiro.adicionar_despesa(nova_despesa)
     sistema_financeiro.salvar_dados()
